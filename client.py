@@ -1,11 +1,13 @@
 import socket
 import json
+from tkinter.tix import Tree
 import psutil
-
+import time
 # connect to server
 def connect(ip, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip, port))
+    print("Connected to server: "+ip+" : "+str(port))
     return s
 #send data to server
 def send(s, data):
@@ -25,11 +27,20 @@ def json_convert (data):
     return json.dumps(data)
 #main
 if __name__ == '__main__':
-    client=connect('0.0.0.0',8080)
-    data=read_data()
-    JSON=json_convert(data)
-    send(client,JSON)
-    
+    counter =1
+    while True:
+        try:
+            client=connect('127.0.0.1',45678)
+            while True :
+                data=read_data()
+                JSON=json_convert(data)
+                send(client,JSON)
+                time.sleep(10)
+        except:
+            print("")
+            print(f"can not connect to server attempt {counter}")
+            counter+=1
+            time.sleep(10)
     
 
 
