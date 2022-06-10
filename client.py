@@ -1,6 +1,5 @@
 import socket
 import json
-from tkinter.tix import Tree
 import psutil
 import time
 # connect to server
@@ -13,7 +12,7 @@ def connect(ip, port):
 def send(s, data):
     s.send(data.encode())
 #read system data
-def read_data():
+def read_data(client):
     data = {}
     data['cpu'] = psutil.cpu_percent(interval=1)
     data['ram'] = psutil.virtual_memory().percent
@@ -21,6 +20,7 @@ def read_data():
     data['ram_total'] = psutil.virtual_memory().total
     data["ram_available"] = psutil.virtual_memory().available
     data['ram_used']=psutil.virtual_memory().available * 100 / psutil.virtual_memory().total
+    data['client_no']=client.getsockname()[1]
     return data
 #convert data to json
 def json_convert (data):
@@ -32,15 +32,15 @@ if __name__ == '__main__':
         try:
             client=connect('127.0.0.1',45678)
             while True :
-                data=read_data()
+                data=read_data(client)
                 JSON=json_convert(data)
                 send(client,JSON)
-                time.sleep(10)
+                time.sleep(15)
         except:
             print("")
             print(f"can not connect to server attempt {counter}")
             counter+=1
-            time.sleep(10)
+            time.sleep(5)        
     
 
 
